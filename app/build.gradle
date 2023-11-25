@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId "com.fongmi.android.tv"
-        minSdk 16
-        targetSdk 28
+        minSdk 19
+        targetSdk 19
         versionCode 209
         versionName "2.0.9"
         multiDexEnabled true

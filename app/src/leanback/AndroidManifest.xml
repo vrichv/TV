@@ -152,7 +152,7 @@
         <receiver
             android:name=".receiver.BootReceiver"
             android:exported="true"
-            android:priority="999">
+            android:priority="0x7FFFFFFF">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />

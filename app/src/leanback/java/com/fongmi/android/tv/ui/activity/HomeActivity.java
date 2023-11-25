@@ -2,6 +2,8 @@ package com.fongmi.android.tv.ui.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -76,6 +78,19 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
     private Result mResult;
     private Clock mClock;
 
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable delayedAction;
+
+    private void startDelayedAction() {
+        delayedAction = () -> LiveActivity.start(this);
+        handler.postDelayed(delayedAction, 5000); // 5000 milliseconds (5 seconds)
+    }
+
+    private void cancelDelayedAction() {
+        if (delayedAction != null) {
+            handler.removeCallbacks(delayedAction);
+        }
+    }
     private Site getHome() {
         return ApiConfig.get().getHome();
     }
@@ -230,8 +245,8 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
 
     private ListRow getFuncRow() {
         ArrayObjectAdapter adapter = new ArrayObjectAdapter(new FuncPresenter(this));
-        adapter.add(Func.create(R.string.home_vod));
         adapter.add(Func.create(R.string.home_live));
+        adapter.add(Func.create(R.string.home_vod));
         adapter.add(Func.create(R.string.home_search));
         adapter.add(Func.create(R.string.home_keep));
         adapter.add(Func.create(R.string.home_push));
@@ -433,6 +448,7 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
     protected void onResume() {
         super.onResume();
         mClock.start();
+        startDelayedAction();
     }
 
     @Override
@@ -443,6 +459,8 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
+        cancelDelayedAction();
         if (mBinding.progressLayout.isProgress()) {
             mBinding.progressLayout.showContent();
         } else if (mPresenter.isDelete()) {
